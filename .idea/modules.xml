@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/shv.iml" filepath="$PROJECT_DIR$/shv.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../shv/shv_common/shv_common.iml" filepath="$PROJECT_DIR$/../shv/shv_common/shv_common.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../shv/shv_dao/shv_dao.iml" filepath="$PROJECT_DIR$/../shv/shv_dao/shv_dao.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../shv/shv_domin/shv_domin.iml" filepath="$PROJECT_DIR$/../shv/shv_domin/shv_domin.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../shv/shv_service/shv_service.iml" filepath="$PROJECT_DIR$/../shv/shv_service/shv_service.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../shv/shv_web/shv_web.iml" filepath="$PROJECT_DIR$/../shv/shv_web/shv_web.iml" />
+    </modules>
+  </component>
+</project>

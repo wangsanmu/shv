@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	   xmlns:tx="http://www.springframework.org/schema/tx" xmlns:util="http://www.springframework.org/schema/util"
+	   xmlns:context="http://www.springframework.org/schema/context"
+	   xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+	<bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
+		<property name="securityManager" ref="securityManager" />
+		<property name="loginUrl" value="${shiro_loginUrl}" />
+		<!--	TODO 待提取	-->
+		<property name="successUrl" value="/" />
+		<property name="unauthorizedUrl" value="${shiro_unauthorizedUrl}" />
+				<property name="filterChainDefinitions" >
+					<value>
+						/** = anon
+						/page/login.jsp = anon
+						/page/register/* = anon
+						/page/index.jsp = authc
+						/page/addItem* = authc,roles[数据管理员]
+						/page/file* = authc,roleOR[普通用户,数据管理员]
+						/page/listItems* = authc,roleOR[数据管理员,普通用户]
+						/page/showItem* = authc,roleOR[数据管理员,普通用户]
+						/page/updateItem*=authc,roles[数据管理员]
+		            </value>
+				</property>
+		 <!--读取初始自定义权限内容-->
+		<!--<property name="filterChainDefinitions" value="#{shiroManager.loadFilterChainDefinitions()}"/>-->
+		<!--<property name="filters">-->
+			<!--<util:map>-->
+				<!--<entry key="login" value-ref="login"></entry>-->
+				<!--<entry key="role" value-ref="role"></entry>-->
+				<!--<entry key="simple" value-ref="simple"></entry>-->
+				<!--<entry key="permission" value-ref="permission"></entry>-->
+				<!--<entry key="kickout" value-ref="kickoutSessionFilter"></entry>-->
+			<!--</util:map>-->
+		<!--</property>-->
+	</bean>
+
+
+	<bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
+		<property name="realm" ref="sampleRealm"/>
+		<property name="sessionManager" ref="sessionManager"/>
+		<property name="rememberMeManager" ref="rememberMeManager"/>
+		<property name="cacheManager" ref="customShiroCacheManager"/>
+	</bean>
+
+
+	<bean id="sessionManager" class="org.apache.shiro.web.session.mgt.DefaultWebSessionManager">
+		<!-- 相隔多久检查一次session的有效性   -->
+		<property name="sessionValidationInterval" value="1800000"/>
+		<!-- session 有效时间为半小时 （毫秒单位）-->
+		<property name="globalSessionTimeout" value="1800000"/>
+		<property name="sessionDAO" ref="customShiroSessionDAO"/>
+		<!-- session 监听，可以多个。 -->
+		<property name="sessionListeners">
+			<list>
+				<ref bean="customSessionListener"/>
+			</list>
+		</property>
+		<!-- 间隔多少时间检查，不配置是60分钟 -->
+		<property name="sessionValidationScheduler" ref="sessionValidationScheduler"/>
+		<!-- 是否开启 检测，默认开启 -->
+		<property name="sessionValidationSchedulerEnabled" value="true"/>
+		<!-- 是否删除无效的，默认也是开启 -->
+		<property name="deleteInvalidSessions" value="true"/>
+		<!-- 会话Cookie模板 -->
+		<property name="sessionIdCookie" ref="sessionIdCookie"/>
+	</bean>
+
+
+	<bean id="sessionValidationScheduler" class="org.apache.shiro.session.mgt.ExecutorServiceSessionValidationScheduler">
+		<!-- 间隔多少时间检查，不配置是60分钟 -->
+		<property name="interval" value="${session.validate.timespan}"/>
+		<property name="sessionManager" ref="sessionManager"/>
+	</bean>
+
+
+
+	<!-- 会话Cookie模板 -->
+	<bean id="sessionIdCookie" class="org.apache.shiro.web.servlet.SimpleCookie">
+		<!--cookie的name，我故意取名叫xxxxbaidu -->
+		<constructor-arg value="wangsenCookie"/>
+		<!-- 客户端通过程序(JS脚本、Applet等)将无法读取到Cookie信息，这将有助于缓解跨站点脚本威胁-->
+		<property name="httpOnly" value="true"/>
+		<!--cookie的有效时间 -->
+		<property name="maxAge" value="-1"/>
+		<!-- 配置存储Session Cookie的domain为 一级域名
+        <property name="domain" value=".itboy.net"/>
+         -->
+	</bean>
+
+
+	<bean id="customSessionListener" class="com.blog.common.shiro.listerner.CustomSessionListener">
+
+	</bean>
+
+	<!-- 会话Session ID生成器 -->
+	<bean id="sessionIdGenerator" class="org.apache.shiro.session.mgt.eis.JavaUuidSessionIdGenerator"/>
+
+
+	<bean id="customShiroSessionDAO" class="com.blog.common.shiro.dao.CustomShiroSessionDAO">
+		<property name="shiroSessionRepository" ref="jedisShiroSessionRepository"/>
+		<property name="sessionIdGenerator" ref="sessionIdGenerator"/>
+	</bean>
+
+	<!-- session创建，删除，查询 -->
+	<bean id="jedisShiroSessionRepository" class="com.blog.common.shiro.cache.JedisShiroSessionRepository">
+		<property name="jedisManager" ref="jedisManager"></property>
+	</bean>
+
+	<!-- redis 的缓存 -->
+	<bean id="jedisManager" class="com.blog.common.shiro.cache.JedisManager">
+		<property name="jedisPool" ref="jedisPool"/>
+	</bean>
+</beans>

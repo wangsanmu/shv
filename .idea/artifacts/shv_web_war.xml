@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="shv_web:war">
+    <output-path>$PROJECT_DIR$/../shv/shv_web/target</output-path>
+    <root id="archive" name="shv_web.war">
+      <element id="artifact" artifact-name="shv_web:war exploded" />
+    </root>
+  </artifact>
+</component>
