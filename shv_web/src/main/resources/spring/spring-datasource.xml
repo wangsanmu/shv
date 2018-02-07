@@ -26,7 +26,7 @@
 		<!-- 连接池最大数量 -->
 		<property name="maxActive" value="${jdbc.maxActive}"></property>
 		<!-- 连接池最大空闲 -->
-		<property name="maxIdle" value="${jdbc.maxIdle}"></property>
+		<property name="maxIdle" value="${jdbc.maxActive}"></property>
 		<!-- 连接池最小空闲 -->
 		<property name="minIdle" value="${jdbc.minIdle}"></property>
 		<!-- 获取连接最大等待时间 -->
@@ -66,7 +66,7 @@
 	<!-- AOP配置-->
 	<aop:config>
 		<aop:pointcut id="myPointcut"
-					  expression="execution(* com.blog.service.impl.*.*(..))" />
+					  expression="execution(* com.blog.service.userService.*.*(..))" />
 		<aop:advisor advice-ref="txAdvice" pointcut-ref="myPointcut" />
 	</aop:config>
 </beans>

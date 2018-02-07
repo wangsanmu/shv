@@ -2,9 +2,11 @@ package com.blog.common.shiro.cache;
 
 import com.blog.common.loger.LoggerUtils;
 import com.blog.common.serialize.SerializeUtil;
+import com.blog.common.shiro.sesson.CustomSessionManager;
+import com.blog.common.shiro.sesson.SessionStatus;
 import com.blog.common.shiro.sesson.ShiroSessionRepository;
 import org.apache.shiro.session.Session;
-import org.springframework.web.bind.support.SessionStatus;
+
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -27,7 +29,7 @@ public class JedisShiroSessionRepository implements ShiroSessionRepository{
             byte[] key = SerializeUtil.serialize(buildRedisSessionKey(session.getId()));
 
             if(null == session.getAttribute(CustomSessionManager.SESSION_STATUS)){
-                //Session 踢出自存存储。
+                //Session 踢存出自存储。
                 SessionStatus sessionStatus = new SessionStatus();
                 session.setAttribute(CustomSessionManager.SESSION_STATUS, sessionStatus);
             }
@@ -73,7 +75,14 @@ public class JedisShiroSessionRepository implements ShiroSessionRepository{
     }
 
     public Collection<Session> getAllSessions() {
-        return null;
+        Collection<Session> sessions = null;
+        try {
+            sessions = getJedisManager().AllSession(DB_INDEX,REDIS_SHIRO_SESSION);
+        } catch (Exception e) {
+            LoggerUtils.fmtError(getClass(), e, "获取全部session异常");
+        }
+
+        return sessions;
     }
 
     private String buildRedisSessionKey(Serializable sessionId) {

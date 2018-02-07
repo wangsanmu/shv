@@ -23,5 +23,17 @@
         </plugins>
     </build>
 
+    <dependencies>
+        <dependency>
+            <groupId>com.wangsen</groupId>
+            <artifactId>shv_domin</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>1.2.12</version>
+        </dependency>
+    </dependencies>
 
 </project>

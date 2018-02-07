@@ -122,7 +122,6 @@ public class JedisManager {
         try {
             jedis = getJedis();
             jedis.select(dbIndex);
-
             Set<byte[]> byteKeys = jedis.keys((JedisShiroSessionRepository.REDIS_SHIRO_ALL).getBytes());
             if (byteKeys != null && byteKeys.size() > 0) {
                 for (byte[] bs : byteKeys) {
